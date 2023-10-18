@@ -25,7 +25,7 @@ export const authConfig: NextAuthOptions = {
             const dbUser = await prisma.user.findFirst({
               where: { email: credentials.email },
             });
-    
+                                    
             //Verify Password here
             //We are going to use a simple === operator
             //In production DB, passwords should be encrypted using something like bcrypt...
