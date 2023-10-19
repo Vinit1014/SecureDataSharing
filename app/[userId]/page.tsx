@@ -1,14 +1,31 @@
-"use client"
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 import EncryptionText from '@/components/EncryptText'
-import SendFile from '@/components/SendFile'
-import React from 'react'
-
-export default function page() {
+import SendFile from '@/components/SendFile';
+import { redirect } from "next/navigation";
+export default async function page() {
+ 
+  console.log("hello");
+  
+  const supabase = createServerComponentClient({cookies});
+  const {
+    data:{session},
+  } = await supabase.auth.getSession();
+  
+  const { data, error } = await supabase.auth.getSession();
+  console.log("Session get "+data);
+  console.log(error);
+  console.log(data);
+  
+    
+  if (!session) {
+    redirect("/");
+  }
   return (
     <div>
+        <h3>Hello {session?.user?.email}</h3>
         <SendFile/>
         {/* <EncryptionText/> */}
-        <h3>hello</h3>
     </div>
   )
 }

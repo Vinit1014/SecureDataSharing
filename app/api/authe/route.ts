@@ -5,22 +5,8 @@ import { NextResponse } from "next/server";
 // export async function GET(req:Request, res:Response) {
 // console.log(process.env.NEXT_PUBLIC_SUPABASE_URL);
 
-    
-
-// let { data: User, error } = await supabase
-//   .from('User')
-//   .select('*')
-    
-//     if (User) {
-//         console.log(User);
-//         return NextResponse.json({user:User})
-//     }
-//     else{
-//         return NextResponse.json({msg:error})
-//     }
-// }
-
 export async function POST(req:Request){
+    
     try{
         const body = await req.json();
         const {email,password} = body;
@@ -33,10 +19,8 @@ export async function POST(req:Request){
         .eq('password',password)
         console.log(User);
 
-       
-
         if (User.length>0) {
-            return NextResponse.json({user:User,message:"Thank you"})   
+            return NextResponse.json({user:email,message:"Thank you"})   
         }
         
         // const hashPassword = await hash(password,10);
@@ -46,12 +30,14 @@ export async function POST(req:Request){
             email:String(email),
             password:String(password)
         }
+
+        
         const data = await supabase
             .from('User')
             .insert([tempData])
             .select()
         if (data) {
-            return NextResponse.json({data:data,message:"User inserted successfully"},{status:201});
+            return NextResponse.json({data:email,message:"User inserted successfully"},{status:201});
         }else{
             return NextResponse.json({"message":"Not inserted"},{status:400})
         }
@@ -60,4 +46,5 @@ export async function POST(req:Request){
         return NextResponse.json(error);
         // console.log(error);
     }
+
 }

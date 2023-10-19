@@ -24,7 +24,7 @@ import crypto from 'crypto';
 function EncryptionText() {
   useEffect(() => {
     // Simulate Alice and Bob
-
+    
     // Alice (Sender)
     const alice = crypto.createDiffieHellman(256);
     const aliceKeys = alice.generateKeys();

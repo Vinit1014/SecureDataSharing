@@ -1,8 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 // import React from 'react'
-
+import { useParams } from 'next/navigation';
 export default function SendFile() {
+
+  const searchParams = useParams();
+  console.log(searchParams.userId);
   const [selectedFile, setSelectedFile] = useState(null);
   const [obj, setObj] = useState();
   const [array, setArray] = useState([
@@ -11,12 +14,34 @@ export default function SendFile() {
     //   fileContent: "",
     // },
   ]);
+  const [fetchedUser,setFetchedUser] = useState([]);
 
     useEffect(() => {
       console.log(array);
       console.log(obj);
-    }, [array,obj]);
+      console.log(fetchedUser);
+      
+    }, [array,obj,fetchedUser]);
 
+    // useEffect(()=>{
+    //   fetchingUser();
+    // },[])
+
+    // const fetchingUser = async () => {
+    //   try {
+    //     const response = await fetch(`/api/fetch/${searchParams.userId}`); //have to make changes over here
+    
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP error! Status: ${response.status}`);
+    //     }
+    
+    //     const data = await response.json(); // Assuming the API returns JSON
+    //     setFetchedUser(data?.user);
+    //     // console.log(data);
+    //   } catch (error) {
+    //     console.error("An error occurred:", error);
+    //   }
+    // };
   // Function to handle file selection
   
   const handleFileSelect = (e) => {
@@ -42,14 +67,34 @@ export default function SendFile() {
     }
   };
   
+  
   return (
-    <div>
+    <>
+    <div className="border-4 border-indigo-500/100 flex items-center justify-center shadow-md">
       <input
+        className="w-96"
         type="file"
         accept=".pdf, .doc, .docx, .txt" // Define accepted file types
         onChange={handleFileSelect}
-      />
-      <button onClick={handleFileSubmit}>Submit</button>
+        />
+      <button className="text-white rounded-md bg-green-600" onClick={handleFileSubmit}>Submit</button>
     </div>
+
+    {/* Fetching data from supabase */}
+    <div className="border-2 border-black">
+      <h3>Hello</h3>
+      {fetchedUser && fetchedUser.map((user,index)=>(
+         <div key={index}> {/* Don't forget to add a unique key when using map */}
+          <p>User Name: {user.email}</p>
+         {/* Add other user-related information here */}
+        </div>
+      ))}
+    </div>
+    <hr></hr>
+    <div>
+      <input></input>
+    </div>
+    </>
+
   );
 }

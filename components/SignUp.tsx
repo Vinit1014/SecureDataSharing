@@ -1,24 +1,48 @@
 "use client";
+import { createClientComponentClient} from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
-// import Router from "next/router";
 import { useEffect, useState } from "react";
 
-export function CredentialsForm() {
+export  function SignUp() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const supabase = createClientComponentClient();
+  const [errorState, setErrorState] = useState("");
   const [formData,setFormData] = useState({
     email:"",
     password:""
   });
+  const [userName,setUserName] = useState("");
 
+  const signUp = async()=>{
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options:{
+        emailRedirectTo:`${location.origin}/auth/callback`
+      }
+    })
+    setErrorState("Incorrect "+error);
+    console.log(data);
+    console.log(error);
+  }
+  
   useEffect(()=>{
     console.log(formData);
-  },[formData])
+    const removed = formData.email.split('@');
+    if (removed.length === 2) {
+      const username = removed[0]; // Get the part before the '@' symbol
+      setUserName(username);
+      console.log(username); // This will print "abc123" to the console
+    } else {
+      console.log("Invalid email format");
+    }
+  },[formData,userName])
 
   const handleSubmit = async()=>{
     console.log("Submitted");
+    
     try{
-      await fetch("/api/auth",{
+      await fetch("/api/authe",{
         method:"POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,11 +52,8 @@ export function CredentialsForm() {
           password: formData.password,
         }),
       })
-      router.push("/asd");
-      // if (response.ok) {
-      //   console.log(response);
-        
-      // }
+      signUp();
+      router.push(`/${userName}`);
     }
     catch(error){
       console.log(error);
@@ -48,10 +69,15 @@ export function CredentialsForm() {
   };
 
   return (
-    <div className="w-full mt-8 text-xl text-black font-semibold flex flex-col">
-      {error && (
+    <div className="flex flex-col items-center mt-10 p-10 shadow-md">
+      <h4>Create a new account</h4>
+      <h2 className="mt-10 mb-4 text-4xl font-bold">Sign Up</h2>
+
+    {/* For signUp */}
+    <div className="w-full mr-8 mt-8 text-xl text-black font-semibold flex flex-col">
+      {errorState && (
         <span className="p-4 mb-2 text-lg font-semibold text-white bg-red-500 rounded-md">
-          {error}
+          {errorState}
         </span>
       )}
       <input
@@ -78,9 +104,11 @@ export function CredentialsForm() {
         type="submit"
         onClick={handleSubmit}
         className="w-full h-12 px-6 mt-4 text-lg text-white transition-colors duration-150 bg-blue-600 rounded-lg focus:shadow-outline hover:bg-blue-700"
-      >
-        Log in
+        >
+        Sign Up
       </button>
     </div>
+  </div>
+
   );
 }
