@@ -27,7 +27,7 @@ export default async function page() {
     <div>
         <h3>Hello {session?.user?.email}</h3>
         {/* <SendFile/> */}
-        <EncryptionText userId={session?.user?.id}/>
+        <EncryptionText userId={session?.user?.id} userMail={session?.user?.email}/>
     </div>
     </ChakraProvider>
   )

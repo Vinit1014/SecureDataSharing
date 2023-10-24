@@ -23,7 +23,14 @@ export function SignIN() {
     setErrorState("Incorrect "+error);
     console.log("Errorrr is "+error);
   }
-  
+
+  const getSessi = async()=>{
+    const { data, error } = await supabase.auth.getSession()
+    console.log("Session data is "+data);
+    console.log(error);
+    
+  }
+
   useEffect(()=>{
     console.log(formData);
     const removed = formData.email.split('@');
@@ -50,6 +57,7 @@ export function SignIN() {
           password: formData.password,
         }),
       })
+      getSessi();
       signIn();
       router.push(`/${userName}`);
     }

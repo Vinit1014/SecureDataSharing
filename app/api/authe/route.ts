@@ -2,7 +2,7 @@ import { supabase } from "@/utils/supabase";
 import {hash} from 'bcrypt';
 import { NextResponse } from "next/server";
 
-// export async function GET(req:Request, res:Response) {
+// export async function GET(req:Request, res:Response){
 // console.log(process.env.NEXT_PUBLIC_SUPABASE_URL);
 
 export async function POST(req:Request){

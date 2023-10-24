@@ -26,23 +26,7 @@ export default function SendFile() {
     // useEffect(()=>{
     //   fetchingPrivateKey();
     // },[])
-
-    const fetchingPrivateKey = async () => {
-      try {
-        const response = await fetch(`/api/fetch/${searchParams.userId}`); //have to make changes over here
     
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-    
-        const data = await response.json(); // Assuming the API returns JSON
-        setFetchedPrivateKey(data.user[0].private_key);
-        console.log(data.user[0].private_key);
-      } catch (error) {
-        console.error("An error occurred:", error);
-      }
-    };
-  
   const sendFile = ()=>{
     console.log("Clicked");
     
@@ -52,8 +36,6 @@ export default function SendFile() {
     <>
       <div className="border-2 border-black">
         <h3>Hello</h3>
-        <button onClick={fetchingPrivateKey}>Get my private key:</button>
-        <p>Your private key is {fetchedPrivateKey}</p>
         <Input placeholder='Enter the reciever'/>
         <Button onClick={sendFile} colorScheme="blue">Send</Button>
       </div>
