@@ -12,6 +12,7 @@ export  function SignUp() {
     password:""
   });
   const [userName,setUserName] = useState("");
+  const [privateKey,setPrivateKey] = useState("");
 
   const signUp = async()=>{
     const { data, error } = await supabase.auth.signUp({
@@ -41,6 +42,17 @@ export  function SignUp() {
   const handleSubmit = async()=>{
     console.log("Submitted");
     
+    //For generating private key for new users
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let privateKey = '';
+    const keyLength = 8;
+    for (let i = 0; i < keyLength; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      privateKey += characters.charAt(randomIndex);
+    }
+    setPrivateKey(privateKey);
+    console.log(privateKey);
+    
     try{
       await fetch("/api/authe",{
         method:"POST",
@@ -50,6 +62,7 @@ export  function SignUp() {
         body:JSON.stringify({
           email: formData.email,
           password: formData.password,
+          private_key:privateKey
         }),
       })
       signUp();

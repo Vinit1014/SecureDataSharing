@@ -9,7 +9,7 @@ export async function POST(req:Request){
     
     try{
         const body = await req.json();
-        const {email,password} = body;
+        const {email,password,private_key} = body;
 
         // check if email already exists
         let {data:User, error} = await supabase
@@ -28,7 +28,8 @@ export async function POST(req:Request){
         let tempData = {
             created_at:new Date(),
             email:String(email),
-            password:String(password)
+            password:String(password),
+            private_key:String(private_key)
         }
 
         

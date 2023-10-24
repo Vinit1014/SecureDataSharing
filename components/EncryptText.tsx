@@ -1,72 +1,75 @@
-// // "use client"
-// import CryptoJS from "crypto-js";
-// // import React from "react";
-
-// export default function EncryptText() {
-//   const message = "Hello, AES!";
-//   const secretKey = "YourSecretKey"; // Replace with your actual secret key
-//   const encryptedMessage = CryptoJS.AES.encrypt(message, secretKey).toString();
-//   const decryptedBytes = CryptoJS.AES.decrypt(encryptedMessage, secretKey);
-//   const decryptedMessage = decryptedBytes.toString(CryptoJS.enc.Utf8);
-
-//   return (
-//     <div>
-//       <p>{encryptedMessage}</p>
-//       <p>{decryptedMessage}</p>
-//     </div>
-//   );
-// }
-
 "use client"
-import React, { useEffect } from 'react';
-import crypto from 'crypto';
+import { supabase } from '@/utils/supabase';
+import { get } from 'http';
+import React,{useState,useEffect} from 'react'
 
-function EncryptionText() {
-  useEffect(() => {
-    // Simulate Alice and Bob
+export default function EncryptText(props) {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileArray,setFileArray] = useState([]);
+  const [userId, setUserId] = useState('');
+
+  const getUser = async () => {
+
+    // try {
+    //   const { data: { user } } = await supabase.auth.getUser()
+    //   if (user !== null) {
+    //     setUserId(user.id);
+    //   } else {
+    //     setUserId('');
+    //   }
+    // } catch (e) {
+    // }
+  }
+
+  const handleFileSelect = async(e) => {
+    const file = e.target.files[0];
     
-    // Alice (Sender)
-    const alice = crypto.createDiffieHellman(256);
-    const aliceKeys = alice.generateKeys();
+    const {data,error} = await supabase
+    .storage
+    .from('files')
+    .upload(props.userId+'/'+file.name,file)
+    // console.log(data);
+    // console.log(error);
+  };
 
-    // Bob (Receiver)
-    const bob = crypto.createDiffieHellman(256);
-    const bobKeys = bob.generateKeys();
+  const fetchFiles = async()=>{
+    const { data, error } = await supabase
+    .storage
+    .from('files')
+    .list('d84e58c5-09e8-4e12-aec0-564ce7be6cc0', {
+    })
+    
+    if (data) {
+      setFileArray(data[0]?.name);
+      console.log(fileArray);
+    }
+    console.log(error);
+    
+  }
 
-    // Exchange public keys
-    const aliceSharedSecret = alice.computeSecret(bobKeys, null, 'hex');
-    const bobSharedSecret = bob.computeSecret(aliceKeys, null, 'hex');
-                                                                        
-    // Verify that both shared secrets match
-    console.log('Alice and Bob shared secrets match:', aliceSharedSecret === bobSharedSecret);
+  const downloadFile = async()=>{
+    const { data, error } = await supabase
+    .storage
+    .from('files')
+    .download(props.userId+'/try.txt')
+    console.log(data);
+    console.log(error);
+  }
 
-    // Use the shared secret as an AES encryption key
-    const aesKey = Buffer.from(aliceSharedSecret, 'hex');
-
-    // Encrypt and decrypt a message
-    const plaintextMessage = 'Hello, Bob!';
-    console.log('Original Message:', plaintextMessage);
-
-    // Encrypt the message using AES
-    const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv('aes-256-cbc', aesKey, iv);
-    let encryptedMessage = cipher.update(plaintextMessage, 'utf8', 'base64');
-    encryptedMessage += cipher.final('base64');
-    console.log('Encrypted Message:', encryptedMessage);
-
-    // Decrypt the message using AES
-    const decipher = crypto.createDecipheriv('aes-256-cbc', aesKey, iv);
-    let decryptedMessage = decipher.update(encryptedMessage, 'base64', 'utf8');
-    decryptedMessage += decipher.final('utf8');
-    console.log('Decrypted Message:', decryptedMessage);
-  }, []);
-
+  useEffect(()=>{
+    getUser();
+  },[userId])
   return (
     <div>
-      <h1>Encryption Example</h1>
-      <p>Open the browser console to see the logs.</p>
+      <input
+        className="w-96"
+        type="file"
+        accept=".pdf, .doc, .docx, .txt" // Define accepted file types
+        onChange={handleFileSelect}
+        />
+      <hr></hr>
+      <button onClick={fetchFiles}>List all files</button>
+      <button onClick={downloadFile}>Download</button>
     </div>
-  );
+  )
 }
-
-export default EncryptionText;

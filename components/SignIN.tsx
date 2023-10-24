@@ -22,7 +22,6 @@ export function SignIN() {
     console.log(data);
     setErrorState("Incorrect "+error);
     console.log("Errorrr is "+error);
-    
   }
   
   useEffect(()=>{

@@ -1,3 +1,5 @@
+"use-client"
+import { ChakraProvider } from '@chakra-ui/react'
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import EncryptionText from '@/components/EncryptText'
@@ -16,16 +18,17 @@ export default async function page() {
   console.log("Session get "+data);
   console.log(error);
   console.log(data);
-  
     
   if (!session) {
     redirect("/");
   }
   return (
+    <ChakraProvider>
     <div>
         <h3>Hello {session?.user?.email}</h3>
-        <SendFile/>
-        {/* <EncryptionText/> */}
+        {/* <SendFile/> */}
+        <EncryptionText userId={session?.user?.id}/>
     </div>
+    </ChakraProvider>
   )
 }
